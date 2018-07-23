@@ -21,6 +21,8 @@ from scipy import optimize
 global final
 import random
 
+metrhths=0
+
 def tensor(vectorA,vectorB) :
     m = np.size(vectorA,0)
     n = np.size(vectorB,0)
@@ -30,8 +32,10 @@ def tensor(vectorA,vectorB) :
             tens[i][j] = vectorA[i]*vectorB[j]
     return (tens);
 
-def func(z) :    
-    n=50 #number of steps
+def func(z) :  
+    global metrhths 
+    metrhths += 1
+    n=2 #number of steps
     k=2*n+1 #number of sites at the final state
     
     initial = np.zeros((2*k,1),dtype=complex)
@@ -43,19 +47,23 @@ def func(z) :
     #Initial = initial
     #print (Initial)
    
-    #definition of matrixS
+    #definition of matrixS  
+    #the one I use
     qplate = np.zeros((2*k,2*k),dtype=complex)
+    #(m,up)--> (m+1,up) (m,down)--> (m-1,down)
+    
     i=1
     while (i+2) < 2*k :
-        qplate[i+2][i] = 1.0
+        qplate[i][i+1] = 1.0
         i += 2
        
-    j=0
+    j=1
     while (j+2) < 2*k :
-        qplate[j][j+2] = 1.0
+        qplate[j+1][j] = 1.0
         j += 2
-    matrixS = qplate
-    
+        
+    matrixS = qplate    
+        
     listSt = []
     listc = []
     listC = []
@@ -128,52 +136,52 @@ def func(z) :
 
     #print (NORM)
     
-    with open('QW_NORM_qplate_n1_T1_steps50_niter-success5_only_NORM.txt', 'a+') as f:
-        print (NORM,file=f)
+    with open('QW_NORM_qplate_n10_T1_steps2_niter-success5_only_NORM.txt', 'a+') as f:
+        print (metrhths,",",NORM,file=f)
     f.close()
     
     if (-NORM+math.sqrt(2)<0.0000001) :
-        f = open("QW_NORM_qplate_n1_T1_steps50_niter-success5.txt","a+")
+        f = open("QW_NORM_qplate_n10_T1_steps2_niter-success5.txt","a+")
         f.write("initial")
         f.close()
-        with open('QW_NORM_qplate_n1_T1_steps50_niter-success5.txt', 'a+') as f:
+        with open('QW_NORM_qplate_n10_T1_steps2_niter-success5.txt', 'a+') as f:
             print (initial,file=f)
         f.close()
         
-        f = open("QW_NORM_qplate_n1_T1_steps50_niter-success5.txt","a+")
+        f = open("QW_NORM_qplate_n10_T1_steps2_niter-success5.txt","a+")
         f.write("l,NORM")
         f.close()
-        with open('QW_NORM_qplate_n1_T1_steps50_niter-success5.txt', 'a+') as f:
+        with open('QW_NORM_qplate_n10_T1_steps2_niter-success5.txt', 'a+') as f:
             print (l,NORM,file=f)
         f.close()
     
-        f = open("QW_NORM_qplate_n1_T1_steps50_niter-success5.txt","a+")
+        f = open("QW_NORM_qplate_n10_T1_steps2_niter-success5.txt","a+")
         f.write("z")
         f.close()
-        with open('QW_NORM_qplate_n1_T1_steps50_niter-success5.txt', 'a+') as f:
+        with open('QW_NORM_qplate_n10_T1_steps2_niter-success5.txt', 'a+') as f:
             print (z,file=f)
         f.close()
         
         
-        f = open("QW_NORM_qplate_n1_T1_steps50_niter-success5.txt","a+")
+        f = open("QW_NORM_qplate_n10_T1_steps2_niter-success5.txt","a+")
         f.write("listc")
         f.close()
-        with open('QW_NORM_qplate_n1_T1_steps50_niter-success5.txt', 'a+') as f:
+        with open('QW_NORM_qplate_n10_T1_steps2_niter-success5.txt', 'a+') as f:
             print (listc,file=f)
         f.close()
         
         
-        f = open("QW_NORM_qplate_n1_T1_steps50_niter-success5.txt","a+")
+        f = open("QW_NORM_qplate_n10_T1_steps2_niter-success5.txt","a+")
         f.write("Phi")
         f.close()
-        with open('QW_NORM_qplate_n1_T1_steps50_niter-success5.txt', 'a+') as f:
+        with open('QW_NORM_qplate_n10_T1_steps2_niter-success5.txt', 'a+') as f:
             print (Phi,file=f)
         f.close()
         
-        f = open("QW_NORM_qplate_n1_T1_steps50_niter-success5.txt","a+")
+        f = open("QW_NORM_qplate_n10_T1_steps2_niter-success5.txt","a+")
         f.write("Phi_reshaped")
         f.close()
-        with open('QW_NORM_qplate_n1_T1_steps50_niter-success5.txt', 'a+') as f:
+        with open('QW_NORM_qplate_n10_T1_steps2_niter-success5.txt', 'a+') as f:
             print (Phi_reshaped,file=f)
         f.close()    
     
@@ -197,7 +205,7 @@ def func(z) :
 #initial_coin_parameters=[1/2,0,math.pi,1/4,math.pi/2.,math.pi/2.,1/8,2*math.pi,0,1/2,3*math.pi,math.pi/4,1/3,2*math.pi/3,math.pi/3] #n=5
 #Initial_coin_par=initial_coin_parameters  
     
-f=50
+f=2
     
 my_randoms=[]
 for i in range (3*f):
@@ -209,7 +217,9 @@ initial_coin_parameters=my_randoms
 
         
 minimizer_kwargs = {"method": "BFGS"}
-ret = optimize.basinhopping(func,initial_coin_parameters, minimizer_kwargs=minimizer_kwargs,niter=1, T=1.0, disp = True,niter_success=5 )
+
+
+ret = optimize.basinhopping(func,initial_coin_parameters, minimizer_kwargs=minimizer_kwargs,niter=10, T=1.0, disp = True,niter_success=5 )
   
 l=0
 listc=[]
